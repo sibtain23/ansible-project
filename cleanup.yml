@@ -1,0 +1,60 @@
+---
+    - name: CLEANUP
+      hosts: frontends
+      gather_facts: false
+
+      tasks:
+        - name: stop-HAproxy
+          service:
+            name: haproxy
+            state: stopped
+        - name: remove haproxy
+          yum:
+            name: haproxy
+            state: absent
+
+## removing tomcat form apps servers            
+#
+    - name: tomcat_cleanup
+      hosts: apps
+      gather_facts: false
+
+      tasks:
+        - name: stop-tomcat
+          service:
+            name: tomcat
+            state: stopped
+        - name: remove service
+          file:
+            path: /etc/systemd/system/tomcat.service
+            state: absent
+        - name: remove-tomcat-user
+          user:
+            name: tomcat
+            state: absent
+            remove: yes
+        - name: remove=tomcat-archive
+          file:
+            path: /tmp/apache-tomcat-9.0.30.tar.gz
+            state: absent
+
+# removing postgresql-server from appdbs
+
+    - name: postgre-cleanup
+      hosts: appdbs
+      gather_facts: false
+
+      tasks:
+        - name: stop-service
+          service:
+            name: postgresql
+            state: stopped
+            enabled: no
+
+        - name: remove-postgre
+          yum:
+            name: postgresql-server
+            state: absent
+          
+
+          

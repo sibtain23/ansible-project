@@ -1,0 +1,13 @@
+- name: postgre-install
+  yum:
+    name: postgresql-server
+    state: present
+
+- name: initialize-postgre    
+  command: "postgresql-setup initdb"
+  
+- name: start-postgre
+  service:
+    name: postgresql
+    state: started
+    enabled: yes
